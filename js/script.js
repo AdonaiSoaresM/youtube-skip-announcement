@@ -1,16 +1,21 @@
-const skipAnnouncement = () => {
+const skipAnnouncement = (editplaceholder) => {
+
+    const textAd = document.querySelector(".ytp-ad-text");
+    if (textAd) document.querySelector("video").currentTime = "200";
+
+
     const buttonskipAd = document.querySelector(".ytp-ad-skip-button");
-    if(buttonskipAd) buttonskipAd.click();
+    if (buttonskipAd) buttonskipAd.click();
 
     const inputSearch = document.querySelector("input#search")
-    if (inputSearch) {
-        
+    if (inputSearch && editplaceholder) {
+
         const placeholder = inputSearch.getAttribute("placeholder");
         placeholder.includes("•") ?
-            inputSearch.setAttribute("placeholder","Pesquisar") :
-            inputSearch.setAttribute("placeholder","Pesquisar  •");
+            inputSearch.setAttribute("placeholder", "Pesquisar") :
+            inputSearch.setAttribute("placeholder", "Pesquisar  •");
     };
-    document.querySelectorAll(".ytp-ce-element").forEach((item)=> item.remove());
+    document.querySelectorAll(".ytp-ce-element").forEach((item) => item.remove());
 }
 
 let activated;
@@ -26,14 +31,41 @@ async function getOn() {
 };
 
 async function start() {
-    if(activated) skipAnnouncement();
+    if (activated) executeBruteForceSkipAnnounceForFiveSeconds();
     return setInterval(async () => {
         await getOn()
-        if(activated) skipAnnouncement();
-    }, 1000);
+        if (activated) skipAnnouncement(true);
+    }, 500);
 };
 
-//await getOn();
+let oldHref = window.location.href;
+console.log(oldHref);
+
+setInterval(() =>{
+    if(activated){
+        if(oldHref != window.location.href){
+            executeBruteForceSkipAnnounceForFiveSeconds();
+            oldHref = window.location.href;
+        }
+    }
+}, 0)
+
+function executeBruteForceSkipAnnounceForFiveSeconds(){
+    
+    let count = 0;
+    
+    const a = setInterval(() => {count += 1; console.log(count)}, 1000)
+    
+    const b = setInterval(() => {
+        skipAnnouncement(false);
+        if (count > 5) {
+            clearInterval(a)
+            clearInterval(b)
+        }
+    }, 0)
+}
+
+getOn();
 start();
 console.log("Starting..")
 
